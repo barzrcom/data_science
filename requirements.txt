@@ -3,3 +3,4 @@ matplotlib==2.0.2
 sympy
 pandas==0.22
 scipy
+requests
