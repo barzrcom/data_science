@@ -5,3 +5,5 @@ pandas==0.22
 scipy
 requests
 pymongo
+seaborn
+scikit-learn
