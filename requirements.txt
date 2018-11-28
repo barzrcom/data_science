@@ -7,3 +7,4 @@ requests
 pymongo
 seaborn
 scikit-learn
+pandas-datareader
