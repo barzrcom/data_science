@@ -1,32 +1,19 @@
 import json
 import os
-import random
 import re
-from time import sleep
 
 import requests
 
 headers = {
     "Host": "www.yad2.co.il",
     "Connection": "keep-alive",
-    "X-MOD-SBB-CTYPE": "xhr",
-    "Accept": "application/json, text/plain, */*",
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
-    "Referer": "http://www.yad2.co.il/realestate/forsale",
+    "Upgrade-Insecure-Requests": "0",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.80 Safari/537.36",
     "Accept-Encoding": "gzip, deflate",
     "Accept-Language": "en-US,en;q=0.9,he;q=0.8",
-    "Cookie": "y2018-2-cohort=73; y2018-2-access=false; PHPSESSID=nkk7eovjqffr1ocqg92j5jpo51; CLIENT_WIDTH_DIR=1440; MAIN_WIDTH_DIR=1440; __gads=ID=ff666bddbb1fbfb1:T=1541164288:S=ALNI_MYk3RiePydwS8hF__4-9hgK5j8m_w; _ga=GA1.3.929066615.1541164288; LPVID=MyOGUwNGEzZDMxNGY2ZDBl; LPSID-72457022=uin-CK9vTlOfyDZCKjpM2g; use_elastic_search=1; _gid=GA1.3.1937517107.1541755484; fitracking_12=no; historyprimaryarea=sharon_area; historysecondaryarea=raanana_kfar_saba; TS011ed9fa=01cdef7ca228548d7e39bc1277388f0b759dfe551586826876150faedec1d574aae8ff035b3d73c276db4d2501e53888ed6ef5ae273df8840b8d152832f9a17a689280e08d1fb4a0025e5893f4173f99de5891d1c5a7f4433aa6c2458d69683b5f8e3bb7779de22ce2d8768e4d2b8f92ce51676a4b; searchB144FromYad2=2_C_1971; SPSI=dd0b28999f2fb9f6a3c081304747be15; yad2_session=5ELnKmMPcot6cUAYeb2DD7Kj9A19NpIrpQ4hNSG4; fi_utm=direct%7Cdirect%7C%7C%7C%7C; UTGv2=h4bdf68b84301171aabd9ebf49717f118220; adOtr=2EdLd90992f; favorites_userid=bfa3370907863; _gat_UA-708051-1=1; spcsrf=9de63621f3dc03c85e765057ab5a1847; sp_lit=KFN4cLmrJ7h/aV6uBit0XA==; PRLST=; yad2upload=520093706.38005.0000; BetterJsPop0=1"
+    "Cookie": "y2018-2-cohort=90; y2018-2-access=true; use_elastic_search=1; _ga=GA1.3.238762837.1544441703; _gid=GA1.3.1497888994.1544441703; PHPSESSID=3a4daf84ad73028868fc36a651c74c46; fitracking_12=no; __gads=ID=9839c78fc20ffef1:T=1544441656:S=ALNI_MYXGPpuyPojVD4RM4_G4GyrK1bk4w; TS011ed9fa=01cdef7ca22ba61476b4cd131f1629d7d806861c1ffddf352a867b0f521ca618f633a58786bec7bbca11f81b0692a0cbf3dad33405054d9206da74d43c06de954c028b892311864321aa9b6ca652700da35b0177d3; SPSI=146c1ae28ca53f4374aaeaccef952d90; sbtsck=jav; UTGv2=h4bc5bcf4bdd24a24ccdf8ffc82301382c29; yad2_session=3HqzL7EtMaR8Khl49Xn39DSsHc9KO3Bm8mpV3u6P; fi_utm=direct%7Cdirect%7C%7C%7C%7C; PRLST=PL; favorites_userid=chi6410618182; adOtr=1c4a126Beac; historyprimaryarea=sharon_area; historysecondaryarea=raanana_kfar_saba; yad2upload=520093706.38005.0000; BetterJsPop0=1; y1-site=_in_x1_b_285_s_nad_pop_1rashy_rotemshany; spcsrf=ed41e68e84df220c7c617231be6e46df"
 }
-#
-# "Host: www.yad2.co.il",
-# "Connection: keep-alive",
-# "X-MOD-SBB-CTYPE: xhr",
-# "Accept: application/json, text/plain, */*",
-# "User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36",
-# "Referer: http://www.yad2.co.il/realestate/forsale?city=8700&street=0407",
-# "Accept-Encoding: gzip, deflate",
-# "Accept-Language: en-US,en;q=0.9,he;q=0.8",
-# "Cookie: y2018-2-cohort=73; y2018-2-access=false; PHPSESSID=nkk7eovjqffr1ocqg92j5jpo51; CLIENT_WIDTH_DIR=1440; MAIN_WIDTH_DIR=1440; __gads=ID=ff666bddbb1fbfb1:T=1541164288:S=ALNI_MYk3RiePydwS8hF__4-9hgK5j8m_w; _ga=GA1.3.929066615.1541164288; LPVID=MyOGUwNGEzZDMxNGY2ZDBl; LPSID-72457022=uin-CK9vTlOfyDZCKjpM2g; use_elastic_search=1; SPSI=33c1f81d5e695b1bcaa4b4d835a4797a; PRLST=YG; UTGv2=D-h4af1544dc3f17bd41e8bb0282625165f884; _gid=GA1.3.1937517107.1541755484; fitracking_12=no; fi_utm=direct%7Cdirect%7C%7C%7C%7C; favorites_userid=bfa3370907863; yad2_session=doD5ZDZCo3ELMWVp8DFaWsuhpMV66QlSzxOk4z7W; adOtr=fX38Xdc516e; spcsrf=ab57b7383f7e23ef54a3830e86eddea3; historyprimaryarea=sharon_area; historysecondaryarea=raanana_kfar_saba; yad2upload=536870922.38005.0000; BetterJsPop0=1; TS011ed9fa=01cdef7ca228548d7e39bc1277388f0b759dfe551586826876150faedec1d574aae8ff035b3d73c276db4d2501e53888ed6ef5ae273df8840b8d152832f9a17a689280e08d1fb4a0025e5893f4173f99de5891d1c5a7f4433aa6c2458d69683b5f8e3bb7779de22ce2d8768e4d2b8f92ce51676a4b",
 
 url = "http://www.yad2.co.il/api/item/{id}"
 url1 = "http://www.yad2.co.il/api/item/{id}/additionalinfo"
@@ -47,7 +34,6 @@ if __name__ == '__main__':
 
     NUMBER_OF_FILES = 50
     NUMBER_OF_PAGES_PER_FILE = 100
-    DELAY_BETWEEN_GET = (15, 30)
 
     ids = []
     with open("all_ids.txt", "r") as f:
@@ -55,18 +41,27 @@ if __name__ == '__main__':
 
     for i, _id in enumerate(ids, 1):
         res = requests.get(url.format(id=_id), headers=headers)
-        sleep(1)
         res1 = requests.get(url1.format(id=_id), headers=headers)
         try:
             items = res.json()
             items1 = res1.json()
-            if items.get("status_code") == 400 or items1.get("status_code") == 400:
-                print(f"status code for id: {_id}")
-                sleep(random.randint(*DELAY_BETWEEN_GET))
+            if isinstance(items, dict) and items.get("status_code") == 400:
+                # in case it is an ad.. e.g. status code for id: 0rucxs, for item:
+                #   {'api_version': 1, 'data': {'codeError': 5,
+                #   'redirectLink': '//www.yad2.co.il/realestate/brokerage-sales/apartment-lev-motzkin,-bne-beitcha-in-kiryat-motskin?location_type=2&city=8200&neighborhood=366&HomeTypeID=1&price=500000--1',
+                #   'otherData': {'catID': 2, 'subCatID': 5}}, 'status_code': 400,
+                #   'error_message': 'UN_ACTIVE_STATUS', 'server_number': 98,
+                #   'categoryDic': {'catEn': None, 'subCatEn': None}, 'yad1Ads': [],
+                #   'agency_more_items': [], 'educational_info': [], 'pricelist_articles': [],
+                #   'rating_area': []}
+                print(f"status code for id: {_id}, for item: {items}")
                 continue
         except json.JSONDecodeError as e:
+            err = "Whoops, looks like something went wrong"
             print(res.text)
             print(res1.text)
+            if err in res.text or err in res1.text:
+                continue
             raise ValueError(f"Error while parsing result for id {_id}, check if site have blocked the IP.")
         feed.append({
             _id: {
@@ -75,7 +70,6 @@ if __name__ == '__main__':
             }
         })
         print("New Items Retrieved:", f"{i}/{len(ids)}")
-        sleep(random.randint(*DELAY_BETWEEN_GET))
 
         if i % NUMBER_OF_PAGES_PER_FILE == 0:
             # when gets to the number of page that the user wants, dump current feed to file
