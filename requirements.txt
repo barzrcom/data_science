@@ -1,10 +1,9 @@
+numpy
 jupyter
 matplotlib==2.0.2
 sympy
 pandas
 scipy
-requests
-pymongo
 seaborn
 scikit-learn
 pandas-datareader
